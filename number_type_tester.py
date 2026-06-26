@@ -72,9 +72,52 @@ print("correct", percent_correct,"%")
 print("time elapsed: ", elapsed_time, " sec")
 print("wpm: ", wpm)
 
+ranking = "intermediate :|"
 if wpm < 20 or percent_correct < 95:
-    print("Ranking: beginner :(")
-elif wpm < 50:
-    print("Ranking: Intermediate :|")
-else:
-    print("Ranking: Advanced :)") 
+    ranking = "beginner :("
+elif wpm > 49:
+    ranking = "advanced :)"
+
+def newRecord(file):
+    file.seek(0)
+    file.write("wpm:\n")
+    file.write(str(wpm) + "\n")
+    file.write("length:\n")
+    file.write(str(length) + "\n")
+    file.write("correct:\n")
+    file.write(str(percent_correct) + " %\n")
+    file.write("ranking:\n")
+    file.write(ranking + "\n")
+    print("new record!")
+
+def isNewRecord(file):
+    firstLine = file.readline()
+    if firstLine == "":
+        newRecord(file)
+    else:
+        secondLine = file.readline()
+        prevWpm = 0 #in case record.txt is empty
+        if secondLine != "" and secondLine != "\n":
+            prevWpm = int(secondLine)
+        if wpm > prevWpm:
+            if percent_correct < 95:
+                addRecord = input(f"You got a new record for wpm but percent correct is less"
+                    f" than 95%. Do you still want to add your new record to record.txt [Y/n] ")
+                if addRecord == "" or addRecord == "Y" or addRecord == "y":
+                    newRecord(file)
+            elif length < 10:
+                addRecord = input(f"You got a new record for wpm but length is less"
+                    f" than 10. Do you still want to add your new record to record.txt [Y/n] ")
+                if addRecord == "" or addRecord == "Y" or addRecord == "y":
+                    newRecord(file)
+            else:
+                newRecord(file)
+
+try:
+    with open("record.txt", "r+") as file: 
+        isNewRecord(file)
+except FileNotFoundError:
+    with open("record.txt", "w+") as file:
+        isNewRecord(file)    
+
+print("ranking: " + ranking)
