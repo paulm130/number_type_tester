@@ -88,6 +88,7 @@ def newRecord(file):
     file.write(str(percent_correct) + " %\n")
     file.write("ranking:\n")
     file.write(ranking + "\n")
+    file.truncate()
     print("new record!")
 
 def isNewRecord(file):
